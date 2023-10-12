@@ -7,7 +7,7 @@ import (
 	"github.com/slaraz/turniej/gra_go/proto"
 )
 
-func Test_najlepszaKarta(t *testing.T) {
+func TestNajlepszyRuch(t *testing.T) {
 	type args struct {
 		zolw    proto.KolorZolwia
 		stanGry *proto.StanGry
@@ -68,7 +68,7 @@ func Test_najlepszaKarta(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := najlepszaKartaDla(tt.args.zolw, tt.args.stanGry)
+			got, got1 := najlepszyRuchDla(tt.args.zolw, tt.args.stanGry)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("najlepszaKarta() got = %v, want %v", got, tt.want)
 			}
