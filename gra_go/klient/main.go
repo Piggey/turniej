@@ -31,12 +31,12 @@ var (
 )
 
 type Dane struct {
-	OstatnieZolwie []proto.KolorZolwia
-	ZolwieNadNami []proto.KolorZolwia
-	ZolwiePodNami []proto.KolorZolwia
-	IleKrokowDoKonca int
+	OstatnieZolwie       []proto.KolorZolwia
+	ZolwieNadNami        []proto.KolorZolwia
+	ZolwiePodNami        []proto.KolorZolwia
+	IleKrokowDoKonca     int
 	DomniemanyPrzeciwnik proto.KolorZolwia // gdy 1v1
-	NaszePole int
+	NaszePole            int
 }
 
 func main() {
@@ -96,8 +96,6 @@ func main() {
 			return
 		}
 
-		ostatnieZolwie := pobierzOstatnieZolwie(stanGry)
-
 		for {
 			// gracz podaje kartę na konsoli
 			// karta = wczytajKarte()
@@ -138,6 +136,37 @@ func randomowyKolor() proto.KolorZolwia {
 
 func randomowaKarta(stanGry *proto.StanGry) proto.Karta {
 	return stanGry.TwojeKarty[0]
+}
+
+func najlepszaKarta(stanGry *proto.StanGry) (proto.Karta, bool) {
+	mojKolor := proto.KolorZolwia_name[int32(stanGry.TwojKolor)]
+	literaKoloru := mojKolor[:1]
+
+	kartyDoPrzodu := []proto.Karta{}
+	for _, k := range stanGry.TwojeKarty {
+		if !strings.HasSuffix(k.String(), "B") {
+			kartyDoPrzodu = append(kartyDoPrzodu, k)
+		}
+	}
+	if len(kartyDoPrzodu) == 0 {
+		return proto.Karta_XX, false
+	}
+
+	kartyNaMnie := []proto.Karta{}
+	for _, k := range kartyDoPrzodu {
+		if strings.HasPrefix(k.String(), literaKoloru) || strings.HasPrefix(k.String(), "A") {
+			kartyNaMnie = append(kartyNaMnie, k)
+		}
+	}
+	if len(kartyNaMnie) == 0 {
+		return proto.Karta_XX, false
+	}
+	for _, k := range kartyNaMnie {
+		if k.String()[1:2] == "2" {
+			return k, true
+		}
+	}
+	return kartyNaMnie[0], true
 }
 
 func wczytajKolor() proto.KolorZolwia {
