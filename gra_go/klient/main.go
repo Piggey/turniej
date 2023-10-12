@@ -102,6 +102,9 @@ func main() {
 			if czyBlad {
 				karta = randomowaKarta(stanGry)
 			}
+			if daneZGry.Tura == 1 {
+				stanGry.TwojeKarty = usunLasty(stanGry)
+			}
 			// gracz podaje kartę na konsoli
 			// karta = wczytajKarte()
 			if !czyBlad && daneZGry.NaszePole < PIERWSZA_FAZA {
@@ -142,6 +145,16 @@ func main() {
 
 func randomowyKolor() proto.KolorZolwia {
 	return proto.KolorZolwia_BLUE
+}
+
+func usunLasty(stanGry *proto.StanGry) []proto.Karta {
+	zagrywalne := []proto.Karta{}
+	for _, k := range stanGry.TwojeKarty {
+		if !strings.HasPrefix(k.String(), "L") {
+			zagrywalne = append(zagrywalne, k)
+		}
+	}
+	return zagrywalne
 }
 
 func randomowaKarta(stanGry *proto.StanGry) proto.Karta {
