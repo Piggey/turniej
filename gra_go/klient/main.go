@@ -73,18 +73,18 @@ func main() {
 	}
 
 	var (
-		kartyDlaKtorychTrzebaPodacKolor = map[proto.Karta]bool{
-			proto.Karta_L1:  true,
-			proto.Karta_L2:  true,
-			proto.Karta_A1:  true,
-			proto.Karta_A1B: true,
-		}
+		// kartyDlaKtorychTrzebaPodacKolor = map[proto.Karta]bool{
+		// 	proto.Karta_L1:  true,
+		// 	proto.Karta_L2:  true,
+		// 	proto.Karta_A1:  true,
+		// 	proto.Karta_A1B: true,
+		// }
 		karta proto.Karta
 		kolor proto.KolorZolwia
 	)
 
 	// przebieg gry
-	var daneZGry danezgry.DaneZGry
+	daneZGry := new(danezgry.DaneZGry)
 
 	// dołączamy do gry graID
 	stanGry := dolaczDoGry(c, *graID, *nazwa)
@@ -107,18 +107,9 @@ func main() {
 			}
 			// gracz podaje kartę na konsoli
 			// karta = wczytajKarte()
-			if !czyBlad && daneZGry.NaszePole < PIERWSZA_FAZA {
-				karta = wybierzKarte(daneZGry, stanGry)
-			} else {
-				karta = randomowaKarta(stanGry)
-			}
-
-			if _, ok := kartyDlaKtorychTrzebaPodacKolor[karta]; ok {
-				// kolor = wczytajKolor()
-				kolor = randomowyKolor()
-			} else {
-				kolor = proto.KolorZolwia_XXX
-			}
+			// wybranie karty i ewentualnie koloru
+			karta, kolor = wybierzRuch(stanGry, daneZGry)
+			log.Printf("wybrany ruch: (%v:%v)", karta, kolor)
 
 			// wysyłam ruch do serwera
 			nowyStan, err := wyslijRuch(c, &proto.RuchGracza{
@@ -143,8 +134,12 @@ func main() {
 	}
 }
 
-func randomowyKolor() proto.KolorZolwia {
-	return proto.KolorZolwia_BLUE
+func wybierzRuch(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Karta, proto.KolorZolwia) {
+	if daneZGry.NaszePole <= PIERWSZA_FAZA {
+		return wybierzRuchPierwszaFazaGry(stanGry, daneZGry)
+	} else {
+		return wybierzRuchDrugaFazaGry(stanGry, daneZGry)
+	}
 }
 
 func usunLasty(stanGry *proto.StanGry) []proto.Karta {
@@ -163,21 +158,41 @@ func randomowaKarta(stanGry *proto.StanGry) proto.Karta {
 	return stanGry.TwojeKarty[rand.Intn(max-min)+min]
 }
 
-func wybierzKarte(dane danezgry.DaneZGry, stanGry *proto.StanGry) proto.Karta {
-	for _, z := range dane.ZolwiePodNami {
-		karta, ok := najlepszaKartaDla(z, stanGry)
+func wybierzRuchPierwszaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Karta, proto.KolorZolwia) {
+	// sprobowac zagrac najlepsza karte dla zolwi pod nami od najdalszego
+	for _, kz := range daneZGry.ZolwiePodNami {
+		karta, kolor, ok := najlepszyRuchDla(kz, stanGry)
 		if ok {
-			return karta
+			return karta, kolor
 		}
 	}
-	karta, ok := najlepszaKartaDla(stanGry.TwojKolor, stanGry)
+
+	// sprobowac zagrac jak najlepsza karte dla naszego zolwia
+	karta, kolor, ok := najlepszyRuchDla(stanGry.TwojKolor, stanGry)
 	if ok {
-		return karta
+		return karta, kolor
 	}
-	return randomowaKarta(stanGry)
+
+	// random karta?
+	return randomowyRuch(stanGry)
 }
 
-func najlepszaKartaDla(zolw proto.KolorZolwia, stanGry *proto.StanGry) (proto.Karta, bool) {
+func wybierzRuchDrugaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Karta, proto.KolorZolwia) {
+	// TODO: implement :)
+	return wybierzRuchPierwszaFazaGry(stanGry, daneZGry)
+}
+
+func randomowyRuch(stanGry *proto.StanGry) (proto.Karta, proto.KolorZolwia) {
+	indeksKarty := rand.Intn(len(stanGry.TwojeKarty))
+	karta := stanGry.TwojeKarty[indeksKarty]
+
+	const iloscKolorow = 5
+	indeksKoloru := rand.Int31n(iloscKolorow)
+
+	return karta, proto.KolorZolwia(indeksKoloru)
+}
+
+func najlepszyRuchDla(zolw proto.KolorZolwia, stanGry *proto.StanGry) (proto.Karta, proto.KolorZolwia, bool) {
 	kolor := proto.KolorZolwia_name[int32(zolw)]
 	literaKoloru := kolor[:1]
 
@@ -187,8 +202,9 @@ func najlepszaKartaDla(zolw proto.KolorZolwia, stanGry *proto.StanGry) (proto.Ka
 			kartyDoPrzodu = append(kartyDoPrzodu, k)
 		}
 	}
+
 	if len(kartyDoPrzodu) == 0 {
-		return proto.Karta_XX, false
+		return proto.Karta_XX, proto.KolorZolwia_XXX, false
 	}
 
 	kartyNaMnie := []proto.Karta{}
@@ -197,15 +213,18 @@ func najlepszaKartaDla(zolw proto.KolorZolwia, stanGry *proto.StanGry) (proto.Ka
 			kartyNaMnie = append(kartyNaMnie, k)
 		}
 	}
+
 	if len(kartyNaMnie) == 0 {
-		return proto.Karta_XX, false
+		return proto.Karta_XX, proto.KolorZolwia_XXX, false
 	}
+
 	for _, k := range kartyNaMnie {
 		if k.String()[1:2] == "2" {
-			return k, true
+			return k, zolw, true
 		}
 	}
-	return kartyNaMnie[0], true
+
+	return kartyNaMnie[0], zolw, true
 }
 
 func dolaczDoGry(c proto.GraClient, graID, nazwa string) *proto.StanGry {
