@@ -90,7 +90,7 @@ func main() {
 			return
 		}
 
-		daneZGry.PobierzDaneZeStanuGry(stanGry)
+		daneZGry.ZaktualizujDaneZeStanuGry(stanGry)
 		for {
 			// gracz podaje kartę na konsoli
 			// karta = wczytajKarte()

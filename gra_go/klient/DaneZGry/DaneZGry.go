@@ -14,9 +14,11 @@ type DaneZGry struct {
 	NaszePole            int
 	KrokowDoKonca        int
 	KartyCofajace        []proto.Karta
+	Tura                 int
 }
 
-func (dzg *DaneZGry) PobierzDaneZeStanuGry(sg *proto.StanGry) {
+func (dzg *DaneZGry) ZaktualizujDaneZeStanuGry(sg *proto.StanGry) {
+	dzg.Tura += 1
 	dzg.NaszePole = naszePole(sg.TwojKolor, sg.Plansza)
 	dzg.KrokowDoKonca = len(sg.Plansza) - dzg.NaszePole
 
