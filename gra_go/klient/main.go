@@ -151,7 +151,8 @@ func wybierzRuchPierwszaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZ
 }
 
 func wybierzRuchDrugaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Karta, proto.KolorZolwia) {
-	panic("unimplemented")
+	// TODO: implement :)
+	return wybierzRuchPierwszaFazaGry(stanGry, daneZGry)
 }
 
 func randomowyRuch(stanGry *proto.StanGry) (proto.Karta, proto.KolorZolwia) {
