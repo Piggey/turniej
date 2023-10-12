@@ -1,4 +1,4 @@
-package main
+package danezgry
 
 import "github.com/slaraz/turniej/gra_go/proto"
 

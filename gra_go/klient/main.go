@@ -7,6 +7,7 @@ import (
 	"log"
 	"time"
 
+	danezgry "github.com/slaraz/turniej/gra_go/klient/DaneZGry"
 	"github.com/slaraz/turniej/gra_go/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -77,7 +78,7 @@ func main() {
 	)
 
 	// przebieg gry
-	var daneZGry DaneZGry
+	var daneZGry danezgry.DaneZGry
 
 	// dołączamy do gry graID
 	stanGry := dolaczDoGry(c, *graID, *nazwa)
