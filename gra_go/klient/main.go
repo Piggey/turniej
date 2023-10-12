@@ -132,6 +132,37 @@ func randomowaKarta(stanGry *proto.StanGry) proto.Karta {
 	return stanGry.TwojeKarty[0]
 }
 
+func najlepszaKarta(stanGry *proto.StanGry) (proto.Karta, bool) {
+	mojKolor := proto.KolorZolwia_name[int32(stanGry.TwojKolor)]
+	literaKoloru := mojKolor[:1]
+
+	kartyDoPrzodu := []proto.Karta{}
+	for _, k := range stanGry.TwojeKarty {
+		if !strings.HasSuffix(k.String(), "B") {
+			kartyDoPrzodu = append(kartyDoPrzodu, k)
+		}
+	}
+	if len(kartyDoPrzodu) == 0 {
+		return proto.Karta_XX, false
+	}
+
+	kartyNaMnie := []proto.Karta{}
+	for _, k := range kartyDoPrzodu {
+		if strings.HasPrefix(k.String(), literaKoloru) || strings.HasPrefix(k.String(), "A") {
+			kartyNaMnie = append(kartyNaMnie, k)
+		}
+	}
+	if len(kartyNaMnie) == 0 {
+		return proto.Karta_XX, false
+	}
+	for _, k := range kartyNaMnie {
+		if k.String()[1:2] == "2" {
+			return k, true
+		}
+	}
+	return kartyNaMnie[0], true
+}
+
 func dolaczDoGry(c proto.GraClient, graID, nazwa string) *proto.StanGry {
 	log.Printf("Gracz %s dołącza do gry %q", nazwa, graID)
 	ctx, cancel := context.WithTimeout(context.Background(), DOLACZ_DO_GRY_TIMEOUT)
