@@ -95,8 +95,18 @@ func main() {
 			return
 		}
 
+		czyBlad := false
+
 		daneZGry.ZaktualizujDaneZeStanuGry(stanGry)
 		for {
+			if czyBlad {
+				karta = randomowaKarta(stanGry)
+			}
+			if daneZGry.Tura == 1 {
+				stanGry.TwojeKarty = usunLasty(stanGry)
+			}
+			// gracz podaje kartę na konsoli
+			// karta = wczytajKarte()
 			// wybranie karty i ewentualnie koloru
 			karta, kolor = wybierzRuch(stanGry, daneZGry)
 			log.Printf("wybrany ruch: (%v:%v)", karta, kolor)
@@ -115,6 +125,7 @@ func main() {
 			} else if err != nil {
 				// inny błąd, np. połączenie z serwerem
 				log.Fatalf("wyslijRuch: status: %v, err: %v", status.Code(err), err)
+				czyBlad = true
 			}
 			// ruch ok
 			stanGry = nowyStan
@@ -129,6 +140,22 @@ func wybierzRuch(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Kar
 	} else {
 		return wybierzRuchDrugaFazaGry(stanGry, daneZGry)
 	}
+}
+
+func usunLasty(stanGry *proto.StanGry) []proto.Karta {
+	zagrywalne := []proto.Karta{}
+	for _, k := range stanGry.TwojeKarty {
+		if !strings.HasPrefix(k.String(), "L") {
+			zagrywalne = append(zagrywalne, k)
+		}
+	}
+	return zagrywalne
+}
+
+func randomowaKarta(stanGry *proto.StanGry) proto.Karta {
+	min := 0
+	max := len(stanGry.TwojeKarty)
+	return stanGry.TwojeKarty[rand.Intn(max-min)+min]
 }
 
 func wybierzRuchPierwszaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Karta, proto.KolorZolwia) {
