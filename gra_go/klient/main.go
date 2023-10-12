@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/slaraz/turniej/gra_go/proto"
@@ -49,6 +48,7 @@ func main() {
 	if *nowa {
 		ctx, cancel := context.WithTimeout(context.Background(), NOWY_MECZ_TIMEOUT)
 		defer cancel()
+
 		nowaGraInfo, err := c.NowyMecz(ctx, &proto.KonfiguracjaGry{LiczbaGraczy: int32(*lg)})
 		if err != nil {
 			log.Fatalf("c.NowyMecz: %v", err)
@@ -123,51 +123,12 @@ func main() {
 	}
 }
 
-func wyciagnijDaneZGry(stanGry *proto.StanGry) DaneZGry {
-
-	panic("unimplemented")
-}
-
 func randomowyKolor() proto.KolorZolwia {
 	return proto.KolorZolwia_BLUE
 }
 
 func randomowaKarta(stanGry *proto.StanGry) proto.Karta {
 	return stanGry.TwojeKarty[0]
-}
-
-func wczytajKolor() proto.KolorZolwia {
-	fmt.Print("Wybierz kolor\n> ")
-	var kolor string
-	_, err := fmt.Scanln(&kolor)
-	if err != nil {
-		log.Fatalf("Błąd wczytywania koloru: %v", err)
-	}
-	k, ok := proto.KolorZolwia_value[strings.ToUpper(kolor)]
-	if !ok {
-		log.Fatalf("Niepoprawny kolor: %q", kolor)
-	}
-	return proto.KolorZolwia(k)
-}
-
-func wczytajKarte() proto.Karta {
-	var karta proto.Karta
-	for {
-		fmt.Print("Wybierz kartę do zagrania:\n> ")
-		var kartatxt string
-		_, err := fmt.Scanln(&kartatxt)
-		if err != nil {
-			log.Fatalf("Błąd wczytywania karty: %v", err)
-		}
-		k, ok := proto.Karta_value[strings.ToUpper(kartatxt)]
-		if !ok {
-			fmt.Printf("Niepoprawna karta: %q\n", kartatxt)
-			continue
-		}
-		karta = proto.Karta(k)
-		break
-	}
-	return karta
 }
 
 func dolaczDoGry(c proto.GraClient, graID, nazwa string) *proto.StanGry {
