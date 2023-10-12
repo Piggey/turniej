@@ -1,0 +1,22 @@
+w wiekszosci przypadkow oplaca sie ruszac do przodu swoim zolwiem lub najdalszym mozliwym zolwiem pod soba
+
+warto cofnac przeciwnika jezeli
+- wiadomo ze to nie bot (zgadywanie jaki kolor zolwia ma przeciwnik)
+- jest blisko do mety i przeciwnik jest blizej do wygranej niz my
+
+w pierwszych etapach gry oplaca sie stackowac zolwie - wiecej mozliwosci przejscia do przodu
+najlepiej zeby nasz zolw mial jak najwiecej pod soba
+
+jak stackowac zolwie
+- latwy sposob: na pale lecimy naszym zolwiem do przodu
+
+ALGORYTM
+RUNDY POCZATKOWE (1 - 6/8)
+  - sprobowac zagrac jak najlepsza karte dla zolwi pod nami jezeli sa 
+  - sprobowac zagrac jak najlepsza karte na nasz kolor
+  - jezeli nie to sprobowac poruszyc sie 
+  - jezeli nie to random karta?
+
+RUNDY KONCOWE (6/8 - 10)
+  - sprawdzic czy nie mozemy cofnac zolwia, ktory jest przed nami
+  - jezeli jestesmy pierwsi to nakurwiac do konca
