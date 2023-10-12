@@ -102,7 +102,7 @@ func main() {
 			if czyBlad {
 				karta = randomowaKarta(stanGry)
 			}
-			if daneZGry.Tura == 1 {
+			if !czyKtorysWyszedl(stanGry) {
 				stanGry.TwojeKarty = usunLasty(stanGry)
 			}
 			// gracz podaje kartę na konsoli
@@ -140,6 +140,17 @@ func wybierzRuch(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Kar
 	} else {
 		return wybierzRuchDrugaFazaGry(stanGry, daneZGry)
 	}
+}
+
+func czyKtorysWyszedl(stanGry *proto.StanGry) bool {
+	for _, p := range stanGry.Plansza {
+		for _, z := range p.Zolwie {
+			if stanGry.TwojKolor != z {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func usunLasty(stanGry *proto.StanGry) []proto.Karta {
