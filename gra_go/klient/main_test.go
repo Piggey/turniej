@@ -9,6 +9,7 @@ import (
 
 func Test_najlepszaKarta(t *testing.T) {
 	type args struct {
+		zolw    proto.KolorZolwia
 		stanGry *proto.StanGry
 	}
 	tests := []struct {
@@ -20,8 +21,8 @@ func Test_najlepszaKarta(t *testing.T) {
 		{
 			name: "",
 			args: args{
+				zolw: proto.KolorZolwia_PURPLE,
 				stanGry: &proto.StanGry{
-					TwojKolor: proto.KolorZolwia_PURPLE,
 					TwojeKarty: []proto.Karta{
 						proto.Karta(proto.Karta_value["P1B"]),
 						proto.Karta(proto.Karta_value["R2"]),
@@ -35,6 +36,7 @@ func Test_najlepszaKarta(t *testing.T) {
 		{
 			name: "",
 			args: args{
+				zolw: proto.KolorZolwia_PURPLE,
 				stanGry: &proto.StanGry{
 					TwojKolor: proto.KolorZolwia_PURPLE,
 					TwojeKarty: []proto.Karta{
@@ -50,6 +52,7 @@ func Test_najlepszaKarta(t *testing.T) {
 		{
 			name: "",
 			args: args{
+				zolw: proto.KolorZolwia_PURPLE,
 				stanGry: &proto.StanGry{
 					TwojKolor: proto.KolorZolwia_PURPLE,
 					TwojeKarty: []proto.Karta{
@@ -65,7 +68,7 @@ func Test_najlepszaKarta(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := najlepszaKarta(tt.args.stanGry)
+			got, got1 := najlepszaKartaDla(tt.args.zolw, tt.args.stanGry)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("najlepszaKarta() got = %v, want %v", got, tt.want)
 			}

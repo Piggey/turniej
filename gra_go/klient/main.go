@@ -23,6 +23,10 @@ const (
 	RUCH_GRACZA_TIMEOUT   = time.Second * 1000
 )
 
+const (
+	PIERWSZA_FAZA = 2
+)
+
 var (
 	addr  = flag.String("addr", IP_ADDR, "adres serwera gry")
 	nazwa = flag.String("nazwa", "Ziutek", "nazwa gracza")
@@ -94,7 +98,11 @@ func main() {
 		for {
 			// gracz podaje kartę na konsoli
 			// karta = wczytajKarte()
-			karta = randomowaKarta(stanGry)
+			if daneZGry.NaszePole < PIERWSZA_FAZA {
+				karta = wybierzKarte(daneZGry, stanGry)
+			} else {
+				karta = randomowaKarta(stanGry)
+			}
 
 			if _, ok := kartyDlaKtorychTrzebaPodacKolor[karta]; ok {
 				// kolor = wczytajKolor()
@@ -133,9 +141,23 @@ func randomowaKarta(stanGry *proto.StanGry) proto.Karta {
 	return stanGry.TwojeKarty[0]
 }
 
-func najlepszaKarta(stanGry *proto.StanGry) (proto.Karta, bool) {
-	mojKolor := proto.KolorZolwia_name[int32(stanGry.TwojKolor)]
-	literaKoloru := mojKolor[:1]
+func wybierzKarte(dane danezgry.DaneZGry, stanGry *proto.StanGry) proto.Karta {
+	for _, z := range dane.ZolwiePodNami {
+		karta, ok := najlepszaKartaDla(z, stanGry)
+		if ok {
+			return karta
+		}
+	}
+	karta, ok := najlepszaKartaDla(stanGry.TwojKolor, stanGry)
+	if ok {
+		return karta
+	}
+	return randomowaKarta(stanGry)
+}
+
+func najlepszaKartaDla(zolw proto.KolorZolwia, stanGry *proto.StanGry) (proto.Karta, bool) {
+	kolor := proto.KolorZolwia_name[int32(zolw)]
+	literaKoloru := kolor[:1]
 
 	kartyDoPrzodu := []proto.Karta{}
 	for _, k := range stanGry.TwojeKarty {
