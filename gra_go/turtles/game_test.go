@@ -44,13 +44,13 @@ func Test_findWinner(t *testing.T) {
 			want1: 2,
 		},
 		{
-			name: "Yellow Wins",
+			name: "blue Wins",
 			args: args{
 				board:   []Field{{}, {}, {}, {Pawns: []Color{"red"}}, {Pawns: []Color{"yellow", "blue"}}},
 				players: []Player{{Color: "yellow"}, {Color: "blue"}},
 			},
-			want:  Player{Color: "yellow"},
-			want1: 1,
+			want:  Player{Color: "blue"},
+			want1: 2,
 		},
 	}
 	for _, tt := range tests {
@@ -87,7 +87,7 @@ func Test_shuffleColorsd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := shuffleColorsd(tt.args.colors); reflect.DeepEqual(got, tt.want) {
+			if got := shuffleColors(tt.args.colors); reflect.DeepEqual(got, tt.want) {
 				t.Errorf("not shuffling() = %v, want diffrent %v", got, tt.want)
 			}
 		})
