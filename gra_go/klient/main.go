@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	danezgry "github.com/slaraz/turniej/gra_go/klient/DaneZGry"
