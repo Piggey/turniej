@@ -1,4 +1,4 @@
-package main
+package danezgry
 
 import (
 	"slices"
@@ -27,6 +27,10 @@ func (dzg *DaneZGry) PobierzDaneZeStanuGry(sg *proto.StanGry) {
 }
 
 func znajdzZolwieNadNami(naszePole int, naszKolor proto.KolorZolwia, plansza []*proto.Pole) []proto.KolorZolwia {
+	if naszePole < 0 {
+		return []proto.KolorZolwia{}
+	}
+
 	indeksNaszegoZolwia := 0
 
 	for i, kolorZolwia := range plansza[naszePole].GetZolwie() {
@@ -40,6 +44,10 @@ func znajdzZolwieNadNami(naszePole int, naszKolor proto.KolorZolwia, plansza []*
 }
 
 func znajdzZolwiePodNami(naszePole int, naszKolor proto.KolorZolwia, plansza []*proto.Pole) []proto.KolorZolwia {
+	if naszePole < 0 {
+		return []proto.KolorZolwia{}
+	}
+
 	indeksNaszegoZolwia := 0
 
 	for i, kolorZolwia := range plansza[naszePole].GetZolwie() {
