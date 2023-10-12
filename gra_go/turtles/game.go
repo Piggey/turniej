@@ -74,7 +74,7 @@ func (game *Game) playCard(c Card, color Color, playerNumber int) (err error) {
 		if !checkIdColorValidDoDL(colors, color) {
 			return ErrInvalidColor
 		}
-		col = Colors[0]
+		col = color
 	}
 
 	if col == Default {
@@ -85,7 +85,13 @@ func (game *Game) playCard(c Card, color Color, playerNumber int) (err error) {
 		return err
 	}
 	game.board = b
-
+	player.Cards = removeCard(player.Cards, c)
+	newCard, err := game.deck.GetCardFromDeck()
+	if err != nil {
+		return err
+	}
+	game.usedDeck = append(game.usedDeck, c)
+	game.UsedCards = append(game.UsedCards, UsedCard{CardSymbol: string(c.Symbol), Player: playerNumber + 1})
 	endGame, _ := CheckIfGameOver(game.board)
 	if endGame {
 		game.isEnd = true
@@ -93,13 +99,7 @@ func (game *Game) playCard(c Card, color Color, playerNumber int) (err error) {
 		game.winer = pi
 		return nil
 	}
-	player.Cards = removeCard(player.Cards, c)
-	newCard, err := game.deck.GetCardFromDeck()
-	if err != nil {
-		return err
-	}
-	game.usedDeck = append(game.usedDeck, c)
-	game.UsedCards = append(game.UsedCards, UsedCard{CardSymbol: string(c.Symbol), Player: playerNumber})
+
 	if len(game.deck) == 0 {
 		game.deck = game.usedDeck
 		game.usedDeck = Deck{}

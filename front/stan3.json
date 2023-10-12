@@ -1,0 +1,216 @@
+{
+    "NowaGra": {
+        "GraID": "ZZ",
+        "Gracze": [
+            {
+                "NumerGracza": 1,
+                "NazwaGracza": "Lewy",
+                "KolorGracza": "BLUE"
+            },
+            {
+                "NumerGracza": 2,
+                "NazwaGracza": "Prawy",
+                "KolorGracza": "RED"
+            }
+        ]
+    },
+    "PrzebiegGry": [
+        {
+            "NazwaGracza": "Lewy",
+            "TwojKolor": "BLUE",
+            "TwojeKarty": [
+                "L1",
+                "P1B",
+                "G1B",
+                "A1",
+                "L2"
+            ],
+            "Plansza": [
+                {
+                    "Zolwie": []
+                },
+                {
+                    "Zolwie": []
+                }
+            ],
+            "ZagraneKatry": []
+        },
+        {
+            "NazwaGracza": "Prawy",
+            "TwojKolor": "RED",
+            "TwojeKarty": [
+                "Y1",
+                "B1",
+                "P1",
+                "R1",
+                "A1"
+            ],
+            "Plansza": [
+                {
+                    "Zolwie": [
+                        "PURPLE"
+                    ]
+                },
+                {
+                    "Zolwie": []
+                }
+            ],
+            "ZagraneKatry": [
+                {
+                    "NazwaGracza": "Lewy",
+                    "ZagranaKarta": "L1"
+                }
+            ]
+        },
+        {
+            "NazwaGracza": "Lewy",
+            "TwojKolor": "BLUE",
+            "TwojeKarty": [
+                "P1B",
+                "G1B",
+                "A1",
+                "L2",
+                "B1"
+            ],
+            "Plansza": [
+                {
+                    "Zolwie": [
+                        "PURPLE",
+                        "YELLOW"
+                    ]
+                },
+                {
+                    "Zolwie": []
+                }
+            ],
+            "ZagraneKatry": [
+                {
+                    "NazwaGracza": "Lewy",
+                    "ZagranaKarta": "L1"
+                },
+                {
+                    "NazwaGracza": "Prawy",
+                    "ZagranaKarta": "Y1"
+                }
+            ]
+        },
+        {
+            "NazwaGracza": "Prawy",
+            "TwojKolor": "RED",
+            "TwojeKarty": [
+                "B1",
+                "P1",
+                "R1",
+                "A1",
+                "Y1"
+            ],
+            "Plansza": [
+                {
+                    "Zolwie": []
+                },
+                {
+                    "Zolwie": []
+                }
+            ],
+            "ZagraneKatry": [
+                {
+                    "NazwaGracza": "Lewy",
+                    "ZagranaKarta": "L1"
+                },
+                {
+                    "NazwaGracza": "Prawy",
+                    "ZagranaKarta": "Y1"
+                },
+                {
+                    "NazwaGracza": "Lewy",
+                    "ZagranaKarta": "P1B"
+                }
+            ]
+        },
+        {
+            "NazwaGracza": "Lewy",
+            "TwojKolor": "BLUE",
+            "TwojeKarty": [
+                "G1B",
+                "A1",
+                "L2",
+                "B1",
+                "P1"
+            ],
+            "Plansza": [
+                {
+                    "Zolwie": [
+                        "YELLOW"
+                    ]
+                },
+                {
+                    "Zolwie": []
+                }
+            ],
+            "ZagraneKatry": [
+                {
+                    "NazwaGracza": "Lewy",
+                    "ZagranaKarta": "L1"
+                },
+                {
+                    "NazwaGracza": "Prawy",
+                    "ZagranaKarta": "Y1"
+                },
+                {
+                    "NazwaGracza": "Lewy",
+                    "ZagranaKarta": "P1B"
+                },
+                {
+                    "NazwaGracza": "Prawy",
+                    "ZagranaKarta": "Y1"
+                }
+            ]
+        },
+        {
+            "NazwaGracza": "Prawy",
+            "TwojKolor": "RED",
+            "TwojeKarty": [
+                "B1",
+                "P1",
+                "R1",
+                "A1",
+                "P1B"
+            ],
+            "Plansza": [
+                {
+                    "Zolwie": []
+                },
+                {
+                    "Zolwie": [
+                        "YELLOW"
+                    ]
+                }
+            ],
+            "ZagraneKatry": [
+                {
+                    "NazwaGracza": "Lewy",
+                    "ZagranaKarta": "L1"
+                },
+                {
+                    "NazwaGracza": "Prawy",
+                    "ZagranaKarta": "Y1"
+                },
+                {
+                    "NazwaGracza": "Lewy",
+                    "ZagranaKarta": "P1B"
+                },
+                {
+                    "NazwaGracza": "Prawy",
+                    "ZagranaKarta": "Y1"
+                },
+                {
+                    "NazwaGracza": "Lewy",
+                    "ZagranaKarta": "A1"
+                }
+            ]
+        }
+    ],
+    "WynikGry": {
+        "WygranyGracz": "remis"
+    }
+}
