@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math/rand"
 	"strings"
 	"time"
 
@@ -94,11 +95,16 @@ func main() {
 			return
 		}
 
+		czyBlad := false
+
 		daneZGry.ZaktualizujDaneZeStanuGry(stanGry)
 		for {
+			if czyBlad {
+				karta = randomowaKarta(stanGry)
+			}
 			// gracz podaje kartę na konsoli
 			// karta = wczytajKarte()
-			if daneZGry.NaszePole < PIERWSZA_FAZA {
+			if !czyBlad && daneZGry.NaszePole < PIERWSZA_FAZA {
 				karta = wybierzKarte(daneZGry, stanGry)
 			} else {
 				karta = randomowaKarta(stanGry)
@@ -125,6 +131,7 @@ func main() {
 			} else if err != nil {
 				// inny błąd, np. połączenie z serwerem
 				log.Fatalf("wyslijRuch: status: %v, err: %v", status.Code(err), err)
+				czyBlad = true
 			}
 			// ruch ok
 			stanGry = nowyStan
@@ -138,7 +145,9 @@ func randomowyKolor() proto.KolorZolwia {
 }
 
 func randomowaKarta(stanGry *proto.StanGry) proto.Karta {
-	return stanGry.TwojeKarty[0]
+	min := 0
+	max := len(stanGry.TwojeKarty)
+	return stanGry.TwojeKarty[rand.Intn(max-min)+min]
 }
 
 func wybierzKarte(dane danezgry.DaneZGry, stanGry *proto.StanGry) proto.Karta {
