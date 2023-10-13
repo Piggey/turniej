@@ -95,13 +95,8 @@ func main() {
 			return
 		}
 
-		czyBlad := false
-
 		daneZGry.ZaktualizujDaneZeStanuGry(stanGry)
 		for {
-			if czyBlad {
-				karta = randomowaKarta(stanGry)
-			}
 			if !czyKtorysWyszedl(stanGry) {
 				stanGry.TwojeKarty = usunLasty(stanGry)
 			}
@@ -125,7 +120,6 @@ func main() {
 			} else if err != nil {
 				// inny błąd, np. połączenie z serwerem
 				log.Fatalf("wyslijRuch: status: %v, err: %v", status.Code(err), err)
-				czyBlad = true
 			}
 			// ruch ok
 			stanGry = nowyStan
