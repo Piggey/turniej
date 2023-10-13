@@ -185,7 +185,7 @@ func wybierzRuchPierwszaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZ
 	}
 
 	// random karta?
-	return randomowyRuch(stanGry)
+	return randomowyRuch(stanGry, daneZGry)
 }
 
 func wybierzRuchDrugaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Karta, proto.KolorZolwia) {
@@ -193,14 +193,21 @@ func wybierzRuchDrugaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry
 	return wybierzRuchPierwszaFazaGry(stanGry, daneZGry)
 }
 
-func randomowyRuch(stanGry *proto.StanGry) (proto.Karta, proto.KolorZolwia) {
+func randomowyRuch(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Karta, proto.KolorZolwia) {
 	indeksKarty := rand.Intn(len(stanGry.TwojeKarty))
 	karta := stanGry.TwojeKarty[indeksKarty]
 
-	const iloscKolorow = 5
-	indeksKoloru := rand.Int31n(iloscKolorow)
+	var kolor proto.KolorZolwia
+	if karta == proto.Karta_L1 || karta == proto.Karta_L2 {
+		indeksKoloruOstatniego := rand.Intn(len(daneZGry.OstatnieZolwie))
+		kolor = daneZGry.OstatnieZolwie[indeksKoloruOstatniego]
+	} else {
+		const iloscKolorow = 5
+		indeksKoloru := rand.Int31n(iloscKolorow)
+		kolor = proto.KolorZolwia(indeksKoloru)
+	}
 
-	return karta, proto.KolorZolwia(indeksKoloru)
+	return karta, kolor
 }
 
 func najlepszyRuchDla(zolw proto.KolorZolwia, stanGry *proto.StanGry) (proto.Karta, proto.KolorZolwia, bool) {
