@@ -187,14 +187,14 @@ func wybierzRuchPierwszaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZ
 }
 
 func wybierzRuchDrugaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Karta, proto.KolorZolwia) {
-	if karta, ok := cofajLidera(stanGry, daneZGry); ok {
+	if karta, ok := cofaj(daneZGry.Lider, stanGry); ok {
 		return karta, daneZGry.Lider
 	}
 	return wybierzRuchPierwszaFazaGry(stanGry, daneZGry)
 }
 
-func cofajLidera(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Karta, bool) {
-	if daneZGry.Lider == stanGry.TwojKolor {
+func cofaj(kogo proto.KolorZolwia, stanGry *proto.StanGry) (proto.Karta, bool) {
+	if kogo == stanGry.TwojKolor {
 		return proto.Karta_XX, false
 	}
 	kartyCofajace := []proto.Karta{}
@@ -207,7 +207,7 @@ func cofajLidera(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Kar
 		return proto.Karta_XX, false
 	}
 	for _, k := range kartyCofajace {
-		if strings.HasPrefix(k.String(), daneZGry.Lider.String()[0:1]) {
+		if strings.HasPrefix(k.String(), kogo.String()[0:1]) {
 			return k, true
 		}
 	}
