@@ -187,8 +187,11 @@ func wybierzRuchPierwszaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZ
 }
 
 func wybierzRuchDrugaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Karta, proto.KolorZolwia) {
-	if karta, ok := cofaj(daneZGry.Lider, stanGry); ok {
-		return karta, daneZGry.Lider
+	kiedy := rand.Intn(10)
+	if kiedy < 7 {
+		if karta, ok := cofaj(daneZGry.Lider, stanGry); ok {
+			return karta, daneZGry.Lider
+		}
 	}
 	return wybierzRuchPierwszaFazaGry(stanGry, daneZGry)
 }
