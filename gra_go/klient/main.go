@@ -221,7 +221,14 @@ func randomowyRuch(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.K
 	var kolor proto.KolorZolwia
 	var karta proto.Karta
 
+	oryginalnaReka := stanGry.TwojeKarty
+
 	for {
+		if len(stanGry.TwojeKarty) == 0 {
+			fmt.Printf("Oryginalna ręka: %v", oryginalnaReka)
+			karta = proto.Karta_XX
+			kolor = proto.KolorZolwia_XXX
+		}
 		indeksKarty := rand.Intn(len(stanGry.TwojeKarty))
 		karta = stanGry.TwojeKarty[indeksKarty]
 		if karta == proto.Karta_L1 || karta == proto.Karta_L2 {
