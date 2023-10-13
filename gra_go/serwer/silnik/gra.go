@@ -1,7 +1,6 @@
 package silnik
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"math/rand"
@@ -14,8 +13,8 @@ import (
 const (
 	MIN_LICZBA_GRACZY         = 1
 	MAX_LICZBA_GRACZY         = 5
-	DOLACZANIE_GRACZY_TIMEOUT = time.Second * 30
-	RUCH_GRACZA_TIMEOUT       = time.Second * 1000
+	DOLACZANIE_GRACZY_TIMEOUT = time.Second * 100
+	RUCH_GRACZA_TIMEOUT       = time.Second * 10
 	WYSLIJ_STATUS_TIMEOUT     = time.Second * 10
 )
 
@@ -100,7 +99,7 @@ func (g *gra) WykonajRuch(graczID string, ruch *proto.RuchGracza) (string, error
 		return "", fmt.Errorf("%s WykonajRuch((): nie ma gracza: %q", g.graID, graczID)
 	}
 	kanOdp := make(chan odpRuchGracza)
-	log.Printf("%s WykonajRuch(): %s rząda wykonania ruchu %q %q\n", g.graID, gracz.nazwaGracza, ruch.ZagranaKarta, ruch.KolorWybrany)
+	//log.Printf("%s WykonajRuch(): %s żąda wykonania ruchu %q %q\n", g.graID, gracz.nazwaGracza, ruch.ZagranaKarta, ruch.KolorWybrany)
 	gracz.kanRuch <- reqRuchGracza{
 		ruch:   ruch,
 		kanOdp: kanOdp,
@@ -108,8 +107,9 @@ func (g *gra) WykonajRuch(graczID string, ruch *proto.RuchGracza) (string, error
 	odp := <-kanOdp
 	if odp.err != nil {
 		log.Printf("%s WykonajRuch(): %s wykonał błędny ruch %q: %v\n", g.graID, gracz.nazwaGracza, ruch.ZagranaKarta, odp.err)
+		time.Sleep(time.Millisecond * 10)
 	} else {
-		log.Printf("%s WykonajRuch(): %s wykonanał ruch %q\n", g.graID, gracz.nazwaGracza, ruch.ZagranaKarta)
+		//log.Printf("%s WykonajRuch(): %s wykonanał ruch %q\n", g.graID, gracz.nazwaGracza, ruch.ZagranaKarta)
 	}
 	return gracz.graczID, odp.err
 }
@@ -119,7 +119,7 @@ func (g *gra) StanGry(graczID string) (*proto.StanGry, error) {
 	if !ok {
 		return nil, fmt.Errorf("%s StanGry(): nie ma gracza: %q", g.graID, graczID)
 	}
-	log.Printf("%s StanGry(): %s rząda status\n", g.graID, gracz.nazwaGracza)
+	//log.Printf("%s StanGry(): %s żąda status\n", g.graID, gracz.nazwaGracza)
 	stan, ok := <-gracz.kanStan
 	if !ok {
 		return nil, fmt.Errorf("gracz status !ok")
@@ -127,17 +127,18 @@ func (g *gra) StanGry(graczID string) (*proto.StanGry, error) {
 	stan.GraID = g.graID
 	stan.GraczID = graczID
 
-	log.Printf("%s StanGry(): %s dostaje: plansza: %v, karty: %v", g.graID, gracz.nazwaGracza, stan.Plansza, stan.TwojeKarty)
+	//log.Printf("%s StanGry(): %s dostaje: plansza: %v, karty: %v", g.graID, gracz.nazwaGracza, stan.Plansza, stan.TwojeKarty)
 	drukujStan(stan)
 	return stan, nil
 }
 
 func drukujStan(stan *proto.StanGry) {
-	stanJSON, _ := json.Marshal(stan)
-	log.Printf("stan: %s", stanJSON)
+	//stanJSON, _ := json.Marshal(stan)
+	//log.Printf("stan: %s", stanJSON)
 }
+
 func (g *gra) przebiegRozgrywki() {
-	log.Printf("%s Rozgrywka0: rozpoczęcie rozgrywki\n", g.graID)
+	//log.Printf("%s Rozgrywka0: rozpoczęcie rozgrywki\n", g.graID)
 
 	// dołączanie graczy
 	gracze := []*gracz{}
@@ -207,11 +208,11 @@ func (g *gra) przebiegRozgrywki() {
 			g.koniec(fmt.Errorf("%s upłynął czas dla gracza: %s", g.graID, ruszajacyGracz.nazwaGracza))
 			return
 		}
-		log.Printf("%s Rozgrywka3: wysłano status dla gracza %q\n", g.graID, ruszajacyGracz.nazwaGracza)
+		//log.Printf("%s Rozgrywka3: wysłano status dla gracza %q\n", g.graID, ruszajacyGracz.nazwaGracza)
 
 		// koniec gry - rozsyłam statusy do pozostałych graczy
 		if stan.CzyKoniec {
-			log.Printf("%s Rozgrywka7: rozsyłam statusy", g.graID)
+			//log.Printf("%s Rozgrywka7: rozsyłam statusy", g.graID)
 			// jeśli koniec gry wysyłamy status do reszty graczy
 			wg := sync.WaitGroup{}
 			for i, gr := range gracze {
@@ -231,7 +232,7 @@ func (g *gra) przebiegRozgrywki() {
 						log.Printf("%s Rozgrywka8x: NIE wysłano status dla gracza %q, timeout\n", g.graID, ggr.nazwaGracza)
 						return
 					}
-					log.Printf("%s Rozgrywka8: wysłano status dla gracza %q\n", g.graID, ggr.nazwaGracza)
+					//log.Printf("%s Rozgrywka8: wysłano status dla gracza %q\n", g.graID, ggr.nazwaGracza)
 				}(i, gr)
 			}
 			wg.Wait()
@@ -241,7 +242,7 @@ func (g *gra) przebiegRozgrywki() {
 			g.koniec(nil)
 			return
 		}
-		log.Printf("%s Rozgrywka4: ruszający gracz %d %q\n", g.graID, i, ruszajacyGracz.nazwaGracza)
+		//log.Printf("%s Rozgrywka4: ruszający gracz %d %q\n", g.graID, i, ruszajacyGracz.nazwaGracza)
 
 		// ruch ---->
 
@@ -265,20 +266,24 @@ func (g *gra) przebiegRozgrywki() {
 			}
 			break
 		}
-		log.Printf("%s Rozgrywka5: wykonano ruch gracza %q\n", g.graID, ruszajacyGracz.nazwaGracza)
+		//log.Printf("%s Rozgrywka5: wykonano ruch gracza %q\n", g.graID, ruszajacyGracz.nazwaGracza)
 
 		i = g.nastepny(i)
 	} //for
 }
 
-func (g *gra) koniec(err error) {
-	log.Printf("%s KONIEC rozgrywki: %v\n", g.graID, err)
-	fmt.Println(g.logGry.getJSON())
-	g.kanArenaKoniecGry <- reqKoniecGry{
-		graID: g.graID,
-		err:   err,
-	}
-}
+// func saveFile(json string) {
+// 	f, err := os.OpenFile("logForWebu.log",
+// 		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+// 	if err != nil {
+// 		log.Println(err)
+// 	}
+// 	defer f.Close()
+// 	if _, err := f.WriteString(json); err != nil {
+// 		log.Println(err)
+// 	}
+
+// }
 
 func (g *gra) nastepny(i int) int {
 	nast := i + 1
@@ -286,5 +291,21 @@ func (g *gra) nastepny(i int) int {
 		return 0
 	} else {
 		return nast
+	}
+}
+
+func (g *gra) koniec(err error) {
+	log.Printf("%s KONIEC rozgrywki: %v\n", g.graID, err)
+	log.Printf("%s WynikGry.WygranyGracz: %q", g.graID, g.logGry.WynikGry.WygranyGracz)
+	//fmt.Println(g.logGry.getJSON())
+	//fmt.Println(g.logGry.getJSON())
+	//saveFile(g.logGry.getJSON())
+
+	//b, _ := json.Marshal(g.getDokument())
+	//g.es.Index("INDEKS", bytes.NewReader(b))
+
+	g.kanArenaKoniecGry <- reqKoniecGry{
+		graID: g.graID,
+		err:   err,
 	}
 }
