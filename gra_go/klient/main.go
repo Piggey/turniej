@@ -249,6 +249,10 @@ func randomowyRuch(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.K
 				stanGry.TwojeKarty = usunKarte(stanGry.TwojeKarty, karta)
 				continue
 			}
+			if strings.HasPrefix(karta.String(), stanGry.TwojKolor.String()[0:1]) {
+				stanGry.TwojeKarty = usunKarte(stanGry.TwojeKarty, karta)
+				continue
+			}
 			indeksKoloruDoCofania := rand.Intn(len(daneZGry.ZolwieKtoreMoznaCofac))
 			kolor = daneZGry.ZolwieKtoreMoznaCofac[indeksKoloruDoCofania]
 			break
