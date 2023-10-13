@@ -7,10 +7,11 @@ import (
 )
 
 type DaneZGry struct {
+	Lider                proto.KolorZolwia
 	OstatnieZolwie       []proto.KolorZolwia
 	ZolwieNadNami        []proto.KolorZolwia
 	ZolwiePodNami        []proto.KolorZolwia
-	ZolwiePrzedNami	[]proto.KolorZolwia
+	ZolwiePrzedNami      []proto.KolorZolwia
 	DomniemanyPrzeciwnik proto.KolorZolwia // gdy 1v1
 	NaszePole            int
 	KrokowDoKonca        int
@@ -23,6 +24,7 @@ func (dzg *DaneZGry) ZaktualizujDaneZeStanuGry(sg *proto.StanGry) {
 	dzg.NaszePole = naszePole(sg.TwojKolor, sg.Plansza)
 	dzg.KrokowDoKonca = len(sg.Plansza) - dzg.NaszePole
 
+	dzg.Lider = znajdzLidera(sg.Plansza)
 	dzg.OstatnieZolwie = znajdzOstatnieZolwie(sg.Plansza)
 	dzg.ZolwiePodNami = znajdzZolwiePodNami(dzg.NaszePole, sg.TwojKolor, sg.Plansza)
 	dzg.ZolwieNadNami = znajdzZolwieNadNami(dzg.NaszePole, sg.TwojKolor, sg.Plansza)
@@ -36,7 +38,7 @@ func znajdzZolwiePrzedNami(naszePole int, naszKolor proto.KolorZolwia, plansza [
 	}
 
 	out := []proto.KolorZolwia{}
-	for i := naszePole + 1; i < len(plansza); i++ { 
+	for i := naszePole + 1; i < len(plansza); i++ {
 		for _, kz := range plansza[i].GetZolwie() {
 			out = append(out, kz)
 		}
@@ -77,6 +79,16 @@ func znajdzZolwiePodNami(naszePole int, naszKolor proto.KolorZolwia, plansza []*
 	}
 
 	return plansza[naszePole].GetZolwie()[:indeksNaszegoZolwia]
+}
+
+func znajdzLidera(plansza []*proto.Pole) proto.KolorZolwia {
+	lider := proto.KolorZolwia_XXX
+	for _, p := range plansza {
+		for _, z := range p.Zolwie {
+			lider = z
+		}
+	}
+	return lider
 }
 
 func znajdzOstatnieZolwie(plansza []*proto.Pole) []proto.KolorZolwia {
