@@ -189,25 +189,83 @@ func wybierzRuchPierwszaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZ
 }
 
 func wybierzRuchDrugaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Karta, proto.KolorZolwia) {
-	// TODO: implement :)
+	kiedy := rand.Intn(10)
+	if kiedy < 7 {
+		if karta, ok := cofaj(daneZGry.Lider, stanGry); ok {
+			return karta, daneZGry.Lider
+		}
+	}
 	return wybierzRuchPierwszaFazaGry(stanGry, daneZGry)
 }
 
-func randomowyRuch(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Karta, proto.KolorZolwia) {
-	indeksKarty := rand.Intn(len(stanGry.TwojeKarty))
-	karta := stanGry.TwojeKarty[indeksKarty]
+func cofaj(kogo proto.KolorZolwia, stanGry *proto.StanGry) (proto.Karta, bool) {
+	if kogo == stanGry.TwojKolor {
+		return proto.Karta_XX, false
+	}
+	kartyCofajace := []proto.Karta{}
+	for _, k := range stanGry.TwojeKarty {
+		if strings.HasSuffix(k.String(), "B") {
+			kartyCofajace = append(kartyCofajace, k)
+		}
+	}
+	if len(kartyCofajace) == 0 {
+		return proto.Karta_XX, false
+	}
+	for _, k := range kartyCofajace {
+		if strings.HasPrefix(k.String(), kogo.String()[0:1]) {
+			return k, true
+		}
+	}
+	return proto.Karta_XX, false
+}
 
+func randomowyRuch(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Karta, proto.KolorZolwia) {
 	var kolor proto.KolorZolwia
-	if karta == proto.Karta_L1 || karta == proto.Karta_L2 {
-		indeksKoloruOstatniego := rand.Intn(len(daneZGry.OstatnieZolwie))
-		kolor = daneZGry.OstatnieZolwie[indeksKoloruOstatniego]
-	} else {
-		const iloscKolorow = 5
-		indeksKoloru := rand.Int31n(iloscKolorow)
-		kolor = proto.KolorZolwia(indeksKoloru)
+	var karta proto.Karta
+
+	for {
+		indeksKarty := rand.Intn(len(stanGry.TwojeKarty))
+		karta = stanGry.TwojeKarty[indeksKarty]
+		if karta == proto.Karta_L1 || karta == proto.Karta_L2 {
+			if len(daneZGry.OstatnieZolwie) == 0 {
+				stanGry.TwojeKarty = usunKarte(stanGry.TwojeKarty, karta)
+				continue
+			}
+			indeksKoloruOstatniego := rand.Intn(len(daneZGry.OstatnieZolwie))
+			kolor = daneZGry.OstatnieZolwie[indeksKoloruOstatniego]
+			break
+		} else if karta == proto.Karta_A1B ||
+			karta == proto.Karta_B1B ||
+			karta == proto.Karta_G1B ||
+			karta == proto.Karta_P1B ||
+			karta == proto.Karta_R1B ||
+			karta == proto.Karta_Y1B {
+			if len(daneZGry.ZolwieKtoreMoznaCofac) == 0 {
+				stanGry.TwojeKarty = usunKarte(stanGry.TwojeKarty, karta)
+				continue
+			}
+			indeksKoloruDoCofania := rand.Intn(len(daneZGry.ZolwieKtoreMoznaCofac))
+			kolor = daneZGry.ZolwieKtoreMoznaCofac[indeksKoloruDoCofania]
+			break
+		} else {
+			const iloscKolorow = 5
+			indeksKoloru := rand.Int31n(iloscKolorow)
+			kolor = proto.KolorZolwia(indeksKoloru)
+			break
+		}
 	}
 
 	return karta, kolor
+}
+
+func usunKarte(karty []proto.Karta, doUsuniecia proto.Karta) []proto.Karta {
+	res := []proto.Karta{}
+	for _, k := range karty {
+		if k != doUsuniecia {
+			res = append(res, k)
+		}
+	}
+	return res
 }
 
 func najlepszyRuchDla(zolw proto.KolorZolwia, stanGry *proto.StanGry) (proto.Karta, proto.KolorZolwia, bool) {
