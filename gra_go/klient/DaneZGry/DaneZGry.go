@@ -7,16 +7,17 @@ import (
 )
 
 type DaneZGry struct {
-	Lider                proto.KolorZolwia
-	OstatnieZolwie       []proto.KolorZolwia
-	ZolwieNadNami        []proto.KolorZolwia
-	ZolwiePodNami        []proto.KolorZolwia
-	ZolwiePrzedNami      []proto.KolorZolwia
-	DomniemanyPrzeciwnik proto.KolorZolwia // gdy 1v1
-	NaszePole            int
-	KrokowDoKonca        int
-	KartyCofajace        []proto.Karta
-	Tura                 int
+	Lider                 proto.KolorZolwia
+	ZolwieKtoreMoznaCofac []proto.KolorZolwia
+	OstatnieZolwie        []proto.KolorZolwia
+	ZolwieNadNami         []proto.KolorZolwia
+	ZolwiePodNami         []proto.KolorZolwia
+	ZolwiePrzedNami       []proto.KolorZolwia
+	DomniemanyPrzeciwnik  proto.KolorZolwia // gdy 1v1
+	NaszePole             int
+	KrokowDoKonca         int
+	KartyCofajace         []proto.Karta
+	Tura                  int
 }
 
 func (dzg *DaneZGry) ZaktualizujDaneZeStanuGry(sg *proto.StanGry) {
@@ -25,11 +26,24 @@ func (dzg *DaneZGry) ZaktualizujDaneZeStanuGry(sg *proto.StanGry) {
 	dzg.KrokowDoKonca = len(sg.Plansza) - dzg.NaszePole
 
 	dzg.Lider = znajdzLidera(sg.Plansza)
+	dzg.ZolwieKtoreMoznaCofac = znajdzZolwieKtoreMoznaCofac(sg.TwojKolor, sg.Plansza)
 	dzg.OstatnieZolwie = znajdzOstatnieZolwie(sg.Plansza)
 	dzg.ZolwiePodNami = znajdzZolwiePodNami(dzg.NaszePole, sg.TwojKolor, sg.Plansza)
 	dzg.ZolwieNadNami = znajdzZolwieNadNami(dzg.NaszePole, sg.TwojKolor, sg.Plansza)
 	dzg.ZolwiePrzedNami = znajdzZolwiePrzedNami(dzg.NaszePole, sg.TwojKolor, sg.Plansza)
 	dzg.KartyCofajace = getKartyCofajace(sg.TwojeKarty)
+}
+
+func znajdzZolwieKtoreMoznaCofac(naszKolor proto.KolorZolwia, plansza []*proto.Pole) []proto.KolorZolwia {
+	res := []proto.KolorZolwia{}
+	for _, p := range plansza {
+		for _, z := range p.Zolwie {
+			if z != naszKolor {
+				res = append(res, z)
+			}
+		}
+	}
+	return res
 }
 
 func znajdzZolwiePrzedNami(naszePole int, naszKolor proto.KolorZolwia, plansza []*proto.Pole) []proto.KolorZolwia {
