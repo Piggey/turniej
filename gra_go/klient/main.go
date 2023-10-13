@@ -73,12 +73,12 @@ func main() {
 	}
 
 	var (
-		// kartyDlaKtorychTrzebaPodacKolor = map[proto.Karta]bool{
-		// 	proto.Karta_L1:  true,
-		// 	proto.Karta_L2:  true,
-		// 	proto.Karta_A1:  true,
-		// 	proto.Karta_A1B: true,
-		// }
+		kartyDlaKtorychTrzebaPodacKolor = map[proto.Karta]bool{
+			proto.Karta_L1:  true,
+			proto.Karta_L2:  true,
+			proto.Karta_A1:  true,
+			proto.Karta_A1B: true,
+		}
 		karta proto.Karta
 		kolor proto.KolorZolwia
 	)
@@ -104,6 +104,10 @@ func main() {
 			// karta = wczytajKarte()
 			// wybranie karty i ewentualnie koloru
 			karta, kolor = wybierzRuch(stanGry, daneZGry)
+			if _, ok := kartyDlaKtorychTrzebaPodacKolor[karta]; !ok {
+				kolor = proto.KolorZolwia_XXX
+			}
+
 			log.Printf("wybrany ruch: (%v:%v)", karta, kolor)
 
 			// wysyłam ruch do serwera
