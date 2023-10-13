@@ -73,12 +73,12 @@ func main() {
 	}
 
 	var (
-		// kartyDlaKtorychTrzebaPodacKolor = map[proto.Karta]bool{
-		// 	proto.Karta_L1:  true,
-		// 	proto.Karta_L2:  true,
-		// 	proto.Karta_A1:  true,
-		// 	proto.Karta_A1B: true,
-		// }
+		kartyDlaKtorychTrzebaPodacKolor = map[proto.Karta]bool{
+			proto.Karta_L1:  true,
+			proto.Karta_L2:  true,
+			proto.Karta_A1:  true,
+			proto.Karta_A1B: true,
+		}
 		karta proto.Karta
 		kolor proto.KolorZolwia
 	)
@@ -95,13 +95,8 @@ func main() {
 			return
 		}
 
-		czyBlad := false
-
 		daneZGry.ZaktualizujDaneZeStanuGry(stanGry)
 		for {
-			if czyBlad {
-				karta = randomowaKarta(stanGry)
-			}
 			if !czyKtorysWyszedl(stanGry) {
 				stanGry.TwojeKarty = usunLasty(stanGry)
 			}
@@ -109,6 +104,10 @@ func main() {
 			// karta = wczytajKarte()
 			// wybranie karty i ewentualnie koloru
 			karta, kolor = wybierzRuch(stanGry, daneZGry)
+			if _, ok := kartyDlaKtorychTrzebaPodacKolor[karta]; !ok {
+				kolor = proto.KolorZolwia_XXX
+			}
+
 			log.Printf("wybrany ruch: (%v:%v)", karta, kolor)
 
 			// wysyłam ruch do serwera
@@ -125,7 +124,6 @@ func main() {
 			} else if err != nil {
 				// inny błąd, np. połączenie z serwerem
 				log.Fatalf("wyslijRuch: status: %v, err: %v", status.Code(err), err)
-				czyBlad = true
 			}
 			// ruch ok
 			stanGry = nowyStan
@@ -185,7 +183,7 @@ func wybierzRuchPierwszaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZ
 	}
 
 	// random karta?
-	return randomowyRuch(stanGry)
+	return randomowyRuch(stanGry, daneZGry)
 }
 
 func wybierzRuchDrugaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Karta, proto.KolorZolwia) {
@@ -193,14 +191,21 @@ func wybierzRuchDrugaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry
 	return wybierzRuchPierwszaFazaGry(stanGry, daneZGry)
 }
 
-func randomowyRuch(stanGry *proto.StanGry) (proto.Karta, proto.KolorZolwia) {
+func randomowyRuch(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Karta, proto.KolorZolwia) {
 	indeksKarty := rand.Intn(len(stanGry.TwojeKarty))
 	karta := stanGry.TwojeKarty[indeksKarty]
 
-	const iloscKolorow = 5
-	indeksKoloru := rand.Int31n(iloscKolorow)
+	var kolor proto.KolorZolwia
+	if karta == proto.Karta_L1 || karta == proto.Karta_L2 {
+		indeksKoloruOstatniego := rand.Intn(len(daneZGry.OstatnieZolwie))
+		kolor = daneZGry.OstatnieZolwie[indeksKoloruOstatniego]
+	} else {
+		const iloscKolorow = 5
+		indeksKoloru := rand.Int31n(iloscKolorow)
+		kolor = proto.KolorZolwia(indeksKoloru)
+	}
 
-	return karta, proto.KolorZolwia(indeksKoloru)
+	return karta, kolor
 }
 
 func najlepszyRuchDla(zolw proto.KolorZolwia, stanGry *proto.StanGry) (proto.Karta, proto.KolorZolwia, bool) {
