@@ -187,8 +187,31 @@ func wybierzRuchPierwszaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZ
 }
 
 func wybierzRuchDrugaFazaGry(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Karta, proto.KolorZolwia) {
-	// TODO: implement :)
+	if karta, ok := cofajLidera(stanGry, daneZGry); ok {
+		return karta, daneZGry.Lider
+	}
 	return wybierzRuchPierwszaFazaGry(stanGry, daneZGry)
+}
+
+func cofajLidera(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Karta, bool) {
+	if daneZGry.Lider == stanGry.TwojKolor {
+		return proto.Karta_XX, false
+	}
+	kartyCofajace := []proto.Karta{}
+	for _, k := range stanGry.TwojeKarty {
+		if strings.HasSuffix(k.String(), "B") {
+			kartyCofajace = append(kartyCofajace, k)
+		}
+	}
+	if len(kartyCofajace) == 0 {
+		return proto.Karta_XX, false
+	}
+	for _, k := range kartyCofajace {
+		if strings.HasPrefix(k.String(), daneZGry.Lider.String()[0:1]) {
+			return k, true
+		}
+	}
+	return proto.Karta_XX, false
 }
 
 func randomowyRuch(stanGry *proto.StanGry, daneZGry *danezgry.DaneZGry) (proto.Karta, proto.KolorZolwia) {
